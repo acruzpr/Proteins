@@ -58,6 +58,71 @@ def getd(i,j):
   num = float(nij)/(ni+nj)
   num *=2.0
   num = 1.0 - num 
+  return num * -1
+
+def makeW():
+  conforms = getConforms()
+  size = len(conforms)
+  w = np.empty([size,size])
+  for (i,j), value in np.ndenumerate(w):
+      w[i][j] = np.exp(getd(i,j))
+      w[j][i] = np.exp(getd(i,j))
+  return w 
+
+def makeD(w):
+  d = np.zeros((len(w[0]),len(w[0])))
+  for i in range(len(w[0])):
+    d[i][i] = np.sum(w[i])
+  return d
+
+def makeLaplacian(d,w):
+  return d - w
+
+def eig(dwd):
+  return np.linalg.eigh(dwd)
+
+
+
+'''
+NEEDS WORK 
+def DWD(d,w):
+  d[np.diag(d)] = 1/(d.diagonal()**.5)
+  return np.dot(d,w).dot(d)
+'''
+#WRITE TO FILE --> np.savetxt('DMatrix.txt',d, fmt ='%f') 
+  
+      i+=1
+
+def getSums(i):
+  return sum(get1Conform(i))
+
+#def writeSums(conforms):
+      #sums = open("sumlinestest5.txt","a")
+      #for i in conforms:
+	#sums.write('%i\n' %(sum(i)))
+##Reads file of sums of all contacts
+#def getSums(i):
+  #with open("sumlinestest4.txt","r") as file:
+    #sums = file.read()
+    #sums = sums.splitlines()
+    #return int(sums[i])
+
+def getNij(i,j):
+  conform1 = get1Conform(i)
+  conform2 = get1Conform(j)
+  counter = 0
+  for i in range(len(conform1)):
+    if conform1[i] == 1 and conform2[i] == 1:
+	counter += 1
+  return counter 
+	
+def getd(i,j):
+  nij = getNij(i,j)
+  ni = getSums(i)
+  nj = getSums(j)
+  num = float(nij)/(ni+nj)
+  num *=2.0
+  num = 1.0 - num 
   return num 
 
 def makeW():
