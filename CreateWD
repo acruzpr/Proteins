@@ -1,6 +1,8 @@
 import numpy as np 
 import math
 import time 
+from scipy.linalg import eigh as eighsci 
+import copy 
 
 #Makes 2-d array of all conforms 
 #Access conform 1, contact 0 by conform = getConforms conform[1][0]
@@ -82,27 +84,39 @@ def makeD(w):
 def makeLaplacian(d,w):
   return d - w
 
-def eigh(dwd):
-  return np.linalg.eigh(dwd)
   
-def DWD(d,w):
-  for i in range(len(d)):
-    temp = d[i][i]
-    d[i][i] = 1/(temp**.5)
-  return np.dot(d,w).dot(d)
+def makeDwd(d,w):
+  temparr = copy.deepcopy(d)
+  for i in range(len(temparr)):
+    temp = temparr[i][i]
+    temparr[i][i] = 1/(temp**.5)
+  return np.dot(temparr,w).dot(temparr)
 
 #WRITE TO FILE --> np.savetxt('DMatrix.txt',d, fmt ='%f')
 def makeDhalf(d):
-  for i in range(len(d)):
-    temp = d[i][i]
-    d[i][i] = 1/(temp**.5)
-  return d 
+  temparr = copy.deepcopy(d)
+  for i in range(len(temparr)):
+    temp = temparr[i][i]
+    temparr[i][i] = 1/(temp**.5)
+  return temparr 
 
+def makeY(W):
+  D = makeD(W)
+  Dhalf = makeDhalf(D)
+  DWD = makeDwd(D,W)
+  eval2,evec2 = eighsci(DWD,eigvals =(198,198))
+  eval3, evec3 = eighsci(DWD, eigvals = (197,197))
+  eval4, evec4 = eighsci(DWD, eigvals=(196,196))
+  Y2 = Dhalf*evec2
+  Y3 = Dhalf*evec3
+  Y4 = Dhalf*evec4
+  Y = np.vstack((Y2,Y3,Y4))
+  return Y
+  
+  
 def makeGoodW(w):
   start = time.time()
   for (i,j), value in np.ndenumerate(w):
     if(w[i][j]) < .5:
       w[i][j] = 0 
   np.savetxt('GoodWMatrix500.txt',w, fmt = "%f")
-
-      
