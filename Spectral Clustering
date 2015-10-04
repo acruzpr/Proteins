@@ -1,0 +1,9 @@
+from sklearn.cluster import SpectralClustering
+
+with open('C:\Users\Maddy\Documents\Maddy\GoodWMatrix.txt') as f:
+    array = [[float(digit) for digit in line.split()]for line in f]
+
+clustering = SpectralClustering(n_clusters = 8, affinity = 'precomputed')
+clustering.fit(array)
+clusters = clustering.fit_predict(array)
+print clusters
