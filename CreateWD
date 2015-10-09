@@ -72,7 +72,7 @@ def makeW():
   for (i,j), value in np.ndenumerate(w):
       w[i][j] = np.exp(getnegd(i,j))
      # w[j][i] = np.exp(getnegd(i,j))
-  return w
+  np.savetxt('WMatrix.txt',d, fmt ='%f')
 
 
 def makeD(w):
